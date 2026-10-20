@@ -93,7 +93,7 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
                 HomeKit         Matter          AirPlay 2     HomeKit Bridge
                     │              │                │              │
                Hue Bridge      Dreame X50        Sonos      Home Assistant
-              (lamps, plugs)                                (HA Green / Pi 5 / NUC)
+              (lamps, plugs)                                (VM on home Mac)
                                                               ├─ Xiaomi purifier
                                                               └─ Neakasa (best effort)
    HomePod sensors: native            Petcube: own app (or replace with HKSV cam)
@@ -101,10 +101,11 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 
 Principle: native first, HA only for gaps. One bridge, one place for credentials.
 
-Host options for HA:
-- **HA Green** (~€100, plug-and-play). Default.
-- Raspberry Pi 5 + SSD, or mini PC (N100) if more add-ons planned.
-- Wired Ethernet, same subnet as Apple hub (mDNS required for HomeKit Bridge).
+Host: **existing always-on Mac** (decided 2026-10-20). Nothing to buy.
+- Home Assistant OS in a **UTM** VM (aarch64 image on Apple Silicon, x86-64 on Intel). Network: **bridged** (own IP; mDNS for HomeKit Bridge). Not Docker Desktop (no host networking → HomeKit discovery fails).
+- **Scrypted** native on macOS (not in VM): Petcube video → HomeKit Secure Video, uses Apple hardware video encoding.
+- Mac: System Settings → Energy → "Prevent automatic sleeping"; Ethernet preferred; UTM VM auto-start at login; auto-login user after power loss.
+- Same subnet as HomePod.
 
 ## Setup steps
 
@@ -116,7 +117,8 @@ Host options for HA:
    - Sonos: Home → Add accessory → each speaker (AirPlay). Assign rooms.
    - Dreame: update firmware → enable Matter in Dreamehome → Home → Add accessory → manual code if QR fails.
 3. **Home Assistant**
-   - Install HA OS on host. Onboard. Set static IP / DHCP reservation.
+   - Install UTM on Mac → create VM from HA OS image (bridged network, 2 vCPU, 4 GB RAM, 32 GB disk) → onboard at `http://homeassistant.local:8123`. DHCP reservation for VM MAC.
+   - Install Scrypted for macOS (for B1 phase 4).
    - Install HACS (only if using community integrations).
    - Add Xiaomi: Settings → Devices → Add → `Xiaomi Home` (or HACS `xiaomi_miot`).
    - Add Neakasa: HACS community integration, if one exists and works for your model.
@@ -165,7 +167,7 @@ Risks: cert pinning (→ Frida/emulator), proprietary video codec relay (→ lar
 
 ## Decisions needed
 
-- Buy HA host (HA Green default).
+- Mac model (Apple Silicon/Intel) + macOS version.
 - Create secondary Petcube + Neakasa accounts (share devices) for HA.
 - Schedule Petcube capture session (B1 phase 1).
 
