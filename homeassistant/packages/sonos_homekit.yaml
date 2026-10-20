@@ -1,0 +1,60 @@
+# Apple Home has no speaker category for non-AirPlay controls.
+# Workaround: volume = dimmable light, grouping = switch, favorites = scripts (shown as switches).
+# AirPlay 2 pairing in Home stays for playback + Siri.
+template:
+  - light:
+      - name: Sonos Living Volume
+        unique_id: sonos_living_volume
+        state: "{{ is_state('media_player.sonos_living', 'playing') }}"
+        level: "{{ ((state_attr('media_player.sonos_living', 'volume_level') or 0) * 255) | int }}"
+        turn_on:
+          - action: media_player.media_play
+            target:
+              entity_id: media_player.sonos_living
+        turn_off:
+          - action: media_player.media_pause
+            target:
+              entity_id: media_player.sonos_living
+        set_level:
+          - action: media_player.volume_set
+            target:
+              entity_id: media_player.sonos_living
+            data:
+              volume_level: "{{ brightness / 255 }}"
+
+  - switch:
+      - name: Sonos Group All
+        unique_id: sonos_group_all
+        state: "{{ (state_attr('media_player.sonos_living', 'group_members') or []) | count > 1 }}"
+        turn_on:
+          - action: media_player.join
+            target:
+              entity_id: media_player.sonos_living
+            data:
+              group_members:
+                - media_player.sonos_kitchen
+                - media_player.sonos_bedroom
+        turn_off:
+          - action: media_player.unjoin
+            target:
+              entity_id:
+                - media_player.sonos_kitchen
+                - media_player.sonos_bedroom
+
+script:
+  sonos_favorite_1:
+    alias: Sonos Favorite 1
+    sequence:
+      - action: media_player.select_source
+        target:
+          entity_id: media_player.sonos_living
+        data:
+          source: "FIP"  # exact name from Sonos favorites (source_list attribute)
+  sonos_favorite_2:
+    alias: Sonos Favorite 2
+    sequence:
+      - action: media_player.select_source
+        target:
+          entity_id: media_player.sonos_living
+        data:
+          source: "France Inter"

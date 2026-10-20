@@ -5,11 +5,12 @@ Date: 2026-10-20. Status: draft for review.
 ## TL;DR
 
 - 3 of 7 device families native today: **Hue**, **HomePod**, **Dreame X50** (Matter via OTA).
-- **Sonos**: AirPlay 2 speakers in Home. Audio only, no HomeKit/Matter control.
+- **Sonos**: AirPlay 2 in Home + **built** HA package: volume, grouping, favorites as Home accessories.
 - **Xiaomi purifier**: Home Assistant (HA) → HomeKit Bridge. Reliable.
-- **Neakasa litter**: no native/official path. HA community integration (cloud) → HomeKit Bridge, sensors + clean button. Best effort.
-- **Petcube**: no API, no HomeKit, no RTSP. Cannot be bridged. Keep app, or replace camera.
+- **Neakasa litter**: existing community HA integration (cloud MQTT push) + **built** mapping → Home sensors + "Clean now" switch.
+- **Petcube**: **build** custom HA integration (reverse-engineer app API + stream) → go2rtc → Scrypted → Home camera with HKSV.
 - Architecture: Apple home hub (HomePod/HomeView) + **Home Assistant** on small always-on host as single bridge for non-native devices.
+- Policy: no device left out. Where no integration exists, we build it. See [Build plan](#build-plan).
 
 ## HomeView: what it is, what it changes
 
@@ -31,11 +32,11 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 |---|---|---|---|
 | Philips Hue lamps + plugs | Yes. Hue Bridge = HomeKit + Matter bridge | Add Hue Bridge in Home (HomeKit code or Matter) | High |
 | HomePod (music, temp/humidity) | Yes. Built-in sensors | Already in Home | High |
-| Sonos | No HomeKit/Matter. AirPlay 2 only | Add as AirPlay speakers in Home (play/volume, scenes w/ audio). Groups/EQ stay in Sonos app | High |
-| Dreame X50 | Matter via OTA (X50 line) → Home "robot vacuum" (iOS 18.4+) | Native Matter pairing | Medium: verify OTA on unit |
-| Xiaomi air purifier | No Matter (no source found) | HA `xiaomi_home` (official) or `xiaomi_miot` (HACS) → HomeKit Bridge | High |
-| Neakasa litter (M1) | No | HA community integration (cloud, HACS) → HomeKit Bridge | Low |
-| Petcube camera | No. No public API/RTSP | None viable. Replace or keep app | High (that it's blocked) |
+| Sonos | No HomeKit/Matter. AirPlay 2 only | AirPlay 2 in Home + HA `sonos` → template accessories (volume/group/favorites) → HomeKit Bridge | High |
+| Dreame X50 Ultra Complete | Yes, Matter via firmware ≥ 4.3.9_3276 (basic: start/stop/pause/dock) | Native Matter + HA `dreame_vacuum` room/mode switches via HomeKit Bridge | High (native), Medium (rooms) |
+| Xiaomi Smart Air Purifier 4 Compact (`xiaomi.airp.cpa4`) | No Matter | HA `xiaomi_miot` (HACS) → HomeKit Bridge | High (fan speed needs workaround) |
+| Neakasa litter (M1) | No | HACS `ha-neakasa-litterbox` → template mapping → HomeKit Bridge | Medium |
+| Petcube camera | No. No public API/RTSP | Custom HA integration (to build) → go2rtc → Scrypted (HKSV) | Low until API capture done |
 
 ### Details and caveats
 
@@ -50,31 +51,38 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 **Sonos**
 - Home app → Add accessory → each AirPlay 2 Sonos appears; assign rooms.
 - Limits: no Sonos grouping, inputs, EQ from Home. Siri "play X in kitchen" works via AirPlay.
-- Optional: HA `sonos` integration for automations (doorbell chime, TTS); HA can't expose Sonos as HomeKit speaker with full control (HomeKit TV/speaker tiles limited). Not recommended.
+- Apple Home has no speaker category for 3rd-party controls; HomeKit Bridge TV/receiver mode only gives power button. Built workaround ([`sonos_homekit.yaml`](../homeassistant/packages/sonos_homekit.yaml)):
+  - Volume per room → dimmable "light" (brightness = volume). Works in Home, scenes, Siri ("set Living Volume to 30%").
+  - Group all rooms → switch.
+  - Sonos favorites (radio, playlists) → scripts shown as switches.
 - Sonos joined CSA (Matter) but no Matter product support announced.
 
-**Dreame X50**
+**Dreame X50 Ultra Complete**
+- Native Matter confirmed for this model ([Apfeltalk](https://www.apfeltalk.de/magazin/news/endlich-matter-bei-dreame-so-bringst-du-den-x50-ultra-complete-ins-apple-home/)). Firmware ≥ 4.3.9_3276 (user report). Rolled out in waves.
 - Update firmware in Dreamehome app → Matter option appears → Home app → Add accessory.
 - Reported issue: QR scan fails; enter Matter PIN manually ([labomaison](https://labomaison.com/entretien/aspirateur-robot/dreame-matter-apple-maison-aspirateur-robot/)).
-- Apple Home RVC features: start/stop/dock, modes, room selection (if exported). Maps, mop settings → Dreamehome app.
+- Matter exposes only start/stop/pause/dock (~4 entities vs ~200 via cloud).
+- Gap filler (B5): HA `dreame_vacuum` (Tasshack, HACS, cloud mode) → per-room clean, suction, mop mode as scripts/switches via HomeKit Bridge. Native vacuum tile stays Matter.
 - Fallback if OTA missing: HA `dreame_vacuum` (Tasshack, HACS) → Matterbridge (separate instance, vacuum alone; Apple requires standalone RVC node). Verify X50 model ID in integration list first.
 
-**Xiaomi purifier**
-- HA `xiaomi_home` (official Xiaomi integration, cloud login) or `xiaomi_miot` (HACS, local token option).
+**Xiaomi Smart Air Purifier 4 Compact**
+- Model `xiaomi.airp.cpa4`. Use `xiaomi_miot` (HACS); `xiaomi_home` (official) as alternative.
+- Known gap: no fan speed entity. Fix: `xiaomi_miot.set_miot_property` (siid 9 / piid 11 reported, [forum](https://community.home-assistant.io/t/mi-air-purifier-4-compact/487880?page=2)); verify on unit, then wrap in template fan (B6).
 - HomeKit Bridge exposes as air purifier: on/off, speed, auto mode, PM2.5/air quality, filter life (model-dependent).
 - Caveat: HA + purifier on same subnet/VLAN for local mode.
 
 **Neakasa**
-- No official API, no Matter. Device is ESP32-based; community HA work exists ([forum](https://community.home-assistant.io/t/neakasa-m1-integration/738783)). Check HACS for a current `neakasa` integration before relying on it.
-- If available: expose waste-bin full, last use, cat weight as sensors; "clean now" as switch. Home has no litter-box category → appears as sensors/switches.
-- Cloud-dependent; can break on vendor app changes.
+- No official API, no Matter. Community integrations exist ([forum](https://community.home-assistant.io/t/neakasa-m1-integration/738783)):
+  - [`roquerodrigo/ha-neakasa-litterbox`](https://github.com/roquerodrigo/ha-neakasa-litterbox): cloud MQTT push, sand level, visits, "Clean now". **Preferred.**
+  - [`tabascoz/hass-neakasa`](https://github.com/tabascoz/hass-neakasa): maintained fork of original `timniklas`; switches (child lock, auto-level, silent mode).
+- Built mapping ([`neakasa_homekit.yaml`](../homeassistant/packages/neakasa_homekit.yaml)): bin full → problem sensor (Home notification), cat present → occupancy, visits → sensor, clean → switch.
+- Caveat: one login per Neakasa account → create second Neakasa account, share device to it, use that in HA.
+- Cloud-dependent. Hardening build: local ESP32 firmware (ESPHome) only if cloud breaks; voids warranty.
 
 **Petcube**
-- No HomeKit, Matter, RTSP or public API. Alexa skill only.
-- Options:
-  1. Keep Petcube app (treats/laser stay there anyway).
-  2. Add HKSV camera for cat area (Eve Cam, Aqara G-series, Logitech Circle View) → shows on HomeView + iPhone, iCloud+ storage.
-- No bridge recommended; Alexa-based hacks are fragile.
+- No HomeKit, Matter, RTSP or public API. Cloud host `api.petcube.com`. Only HA code found: [`lyntoo/petcube-ha`](https://github.com/lyntoo/petcube-ha) (Bites treat dispenser, no video).
+- Build: see [Build plan](#build-plan) B1. Phased; stream extraction is the hard part.
+- Interim: Petcube app for live view; Home gets nothing until B1 phase 2.
 
 ## Recommended architecture
 
@@ -125,18 +133,41 @@ Host options for HA:
    - Reboot HA → accessories return without re-pairing.
    - Remote access works (hub online).
 
+## Build plan
+
+Rule: no device left out. Order = value × feasibility.
+
+| # | Build | What | Status | Needs from you |
+|---|---|---|---|---|
+| B1 | **Petcube HA integration** | Custom component `petcube`: login, devices, status, night vision, treat/laser. Then camera entity with stream | To build | Petcube account (2nd account w/ shared device), one traffic capture session |
+| B2 | Sonos Home accessories | Template volume/group/favorites | Done ([yaml](../homeassistant/packages/sonos_homekit.yaml)) | Entity IDs, favorite names |
+| B3 | Neakasa Home mapping | Template sensors/switch on community integration | Done ([yaml](../homeassistant/packages/neakasa_homekit.yaml)) | 2nd Neakasa account |
+| B4 | HomeKit Bridge config | Single bridge, strict include filter | Done ([yaml](../homeassistant/packages/homekit_bridge.yaml)) | None |
+| B5 | Dreame rooms/modes | `dreame_vacuum` → room-clean + suction/mop scripts → HomeKit Bridge (Matter covers basics only) | To build | Dreame account, room names |
+| B6 | Purifier fan speed | Template fan wrapping `set_miot_property` | To build | Confirm siid/piid on unit |
+
+### B1 Petcube: phases
+
+1. **API capture**: mitmproxy on iPhone (or Android emulator if cert pinning) while using Petcube app. Record auth, device list, commands, stream negotiation.
+2. **Control integration**: Python `custom_components/petcube` (config flow, coordinator polling `api.petcube.com`). Entities: online, night vision switch, laser/treat buttons, motion/sound events. → HomeKit Bridge.
+3. **Video**: identify stream transport (likely WebRTC/proprietary relay). Implement in go2rtc source (`exec:` wrapper or native WebRTC client) → HA `camera` entity.
+4. **HomeKit camera**: Scrypted (HA add-on) imports go2rtc stream → HomeKit Secure Video (motion, recordings in iCloud+). Visible on HomeView, iPhone, Apple TV.
+5. **Publish**: HACS repo, tests, ChangeLog.
+
+Risks: cert pinning (→ Frida/emulator), proprietary video codec relay (→ largest effort), ToS. Fallback if phase 3 blocked after time-box: control-only integration + HKSV camera aimed at same area.
+
 ## Risks
 
 - Dreame Matter OTA rollout per region/model: unverified for exact unit.
-- Neakasa/Petcube: vendor-locked clouds. Partial or no integration.
+- Neakasa/Petcube: vendor clouds, unofficial APIs. Can break on app updates → pin versions, monitor.
 - HomeKit Bridge pairing breaks if HA IP changes or mDNS blocked (VLAN, mesh Wi-Fi isolation).
 - Duplicates if a device is both native and bridged → strict HA include filter.
 
 ## Decisions needed
 
-- Accept Petcube staying outside Home, or buy HKSV camera.
 - Buy HA host (HA Green default).
-- Neakasa: accept best-effort integration or keep app-only.
+- Create secondary Petcube + Neakasa accounts (share devices) for HA.
+- Schedule Petcube capture session (B1 phase 1).
 
 ## Sources
 

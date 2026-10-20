@@ -1,0 +1,39 @@
+# One bridge for every device without native HomeKit/Matter.
+# Hue, HomePod, Dreame (Matter) are paired directly in Apple Home: never include them here.
+homekit:
+  - name: HA Bridge
+    port: 21064
+    filter:
+      include_entities:
+        # Xiaomi purifier (xiaomi_home / xiaomi_miot)
+        - fan.xiaomi_air_purifier
+        - sensor.xiaomi_air_purifier_pm25
+        - sensor.xiaomi_air_purifier_filter_life
+        # Dreame room/mode scripts (B5, dreame_vacuum); vacuum itself is native Matter
+        # - script.dreame_clean_kitchen
+        # - script.dreame_clean_living
+        # Sonos extensions (sonos_homekit.yaml)
+        - light.sonos_living_volume
+        - switch.sonos_group_all
+        - script.sonos_favorite_1
+        - script.sonos_favorite_2
+        # Neakasa (neakasa_homekit.yaml)
+        - binary_sensor.litter_bin_full
+        - binary_sensor.litter_cat_present
+        - sensor.litter_visits_today
+        - switch.litter_clean_now
+    entity_config:
+      fan.xiaomi_air_purifier:
+        linked_pm25_sensor: sensor.xiaomi_air_purifier_pm25
+        linked_filter_change_indicator_binary_sensor: binary_sensor.xiaomi_air_purifier_filter_low
+      binary_sensor.litter_bin_full:
+        name: Litter bin full
+
+# Petcube camera: separate accessory-mode instance once custom integration exists (see issue tracker).
+# Cameras must be their own HomeKit accessory, not behind the bridge.
+#  - name: Petcube Cam
+#    port: 21065
+#    mode: accessory
+#    filter:
+#      include_entities:
+#        - camera.petcube
