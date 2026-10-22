@@ -100,7 +100,7 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
                 HomeKit         Matter          AirPlay 2     HomeKit Bridge
                     │              │                │              │
                Hue Bridge      Dreame X50        Sonos      Home Assistant
-              (lamps, plugs)                                (VM on home Mac)
+              (lamps, plugs)                                (VM on home laptop)
                                                               ├─ Xiaomi purifier
                                                               ├─ Neakasa
                                                               └─ Petlibro feeder
@@ -109,10 +109,10 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 
 Principle: native first, HA only for gaps. One bridge, one place for credentials.
 
-Host: **existing always-on Mac** (decided 2026-10-20). Nothing to buy.
-- Home Assistant OS in a **UTM** VM (aarch64 image on Apple Silicon, x86-64 on Intel). Network: **bridged** (own IP; mDNS for HomeKit Bridge). Not Docker Desktop (no host networking → HomeKit discovery fails).
-- **Scrypted** native on macOS (not in VM): Petcube video → HomeKit Secure Video, uses Apple hardware video encoding.
-- Mac: System Settings → Energy → "Prevent automatic sleeping"; Ethernet preferred; UTM VM auto-start at login; auto-login user after power loss.
+Host: **user's laptop, always on at home** (decided 2026-10-22, replaces Mac).
+- macOS: Home Assistant OS in **UTM** VM, bridged network. Windows: HA OS in Hyper-V/VirtualBox VM, bridged. Linux: HA OS in KVM, bridged. Never Docker Desktop (no host networking → HomeKit discovery fails).
+- Scrypted native on host OS (Petcube video → HKSV).
+- Laptop-as-server: power connected, sleep disabled (incl. lid closed), Ethernet preferred, VM auto-start at login, auto-login after power loss. Bridge goes offline whenever laptop leaves home.
 - Same subnet as HomePod.
 
 ## Setup steps
@@ -125,8 +125,8 @@ Host: **existing always-on Mac** (decided 2026-10-20). Nothing to buy.
    - Sonos: Home → Add accessory → each speaker (AirPlay). Assign rooms.
    - Dreame: update firmware → enable Matter in Dreamehome → Home → Add accessory → manual code if QR fails.
 3. **Home Assistant**
-   - Install UTM on Mac → create VM from HA OS image (bridged network, 2 vCPU, 4 GB RAM, 32 GB disk) → onboard at `http://homeassistant.local:8123`. DHCP reservation for VM MAC.
-   - Install Scrypted for macOS (for B1 phase 4).
+   - Install hypervisor on laptop (UTM on macOS) → create VM from HA OS image (bridged network, 2 vCPU, 4 GB RAM, 32 GB disk) → onboard at `http://homeassistant.local:8123`. DHCP reservation for VM MAC.
+   - Install Scrypted on laptop OS (for B1 phase 4).
    - Install HACS (only if using community integrations).
    - Add Xiaomi: Settings → Devices → Add → `Xiaomi Home` (or HACS `xiaomi_miot`).
    - Add Neakasa: HACS community integration, if one exists and works for your model.
@@ -153,13 +153,13 @@ Rule: no device left out. Order = value × feasibility.
 | B2 | Sonos Home accessories | Template volume/group/favorites | Done ([yaml](../homeassistant/packages/sonos_homekit.yaml)) | Entity IDs, favorite names |
 | B3 | Neakasa Home mapping | Template sensors/switch on community integration | Done ([yaml](../homeassistant/packages/neakasa_homekit.yaml)) | 2nd Neakasa account |
 | B4 | HomeKit Bridge config | Single bridge, strict include filter | Done ([yaml](../homeassistant/packages/homekit_bridge.yaml)) | None |
-| B5 | Dreame rooms/modes | `dreame_vacuum` → room-clean + suction/mop scripts → HomeKit Bridge (Matter covers basics only) | To build | Dreame account, room names |
+| B5 | Dreame rooms/modes | `dreame_vacuum` → room-clean + suction/mop scripts → HomeKit Bridge (Matter covers basics only) | Done ([yaml](../homeassistant/packages/dreame_homekit.yaml)), segment IDs TBC | Dreame account, room names |
 | B7 | Petlibro feeder | Template mapping on community integration | Done ([yaml](../homeassistant/packages/petlibro_homekit.yaml)), entity IDs TBC | Model, 2nd Petlibro account |
-| B6 | Purifier fan speed | Template fan wrapping `set_miot_property` | To build | Confirm siid/piid on unit |
+| B6 | Purifier fan speed | Template fan wrapping `set_miot_property` | Done ([yaml](../homeassistant/packages/xiaomi_purifier_homekit.yaml)), siid/piid + max level TBC on unit | Confirm siid/piid on unit |
 
 ### B1 Petcube: phases
 
-1. **API capture**: mitmproxy on iPhone (or Android emulator if cert pinning) while using Petcube app. Record auth, device list, commands, stream negotiation.
+1. **API capture** ([tool](../tools/petcube/README.md)): mitmproxy on iPhone (or Android emulator if cert pinning) while using Petcube app. Record auth, device list, commands, stream negotiation.
 2. **Control integration**: Python `custom_components/petcube` (config flow, coordinator polling `api.petcube.com`). Entities: online, night vision switch, laser/treat buttons, motion/sound events. → HomeKit Bridge.
 3. **Video**: identify stream transport (likely WebRTC/proprietary relay). Implement in go2rtc source (`exec:` wrapper or native WebRTC client) → HA `camera` entity.
 4. **HomeKit camera**: Scrypted (HA add-on) imports go2rtc stream → HomeKit Secure Video (motion, recordings in iCloud+). Visible on HomeView, iPhone, Apple TV.
@@ -176,7 +176,7 @@ Risks: cert pinning (→ Frida/emulator), proprietary video codec relay (→ lar
 
 ## Decisions needed
 
-- Mac model (Apple Silicon/Intel) + macOS version.
+- Laptop OS + CPU (Apple Silicon/Intel/AMD).
 - Create secondary Petcube + Neakasa + Petlibro accounts (share devices) for HA.
 - Schedule Petcube capture session (B1 phase 1).
 

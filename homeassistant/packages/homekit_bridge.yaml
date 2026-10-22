@@ -6,12 +6,17 @@ homekit:
     filter:
       include_entities:
         # Xiaomi purifier (xiaomi_home / xiaomi_miot)
-        - fan.xiaomi_air_purifier
+        - fan.air_purifier  # wrapped (xiaomi_purifier_homekit.yaml)
         - sensor.xiaomi_air_purifier_pm25
         - sensor.xiaomi_air_purifier_filter_life
         # Dreame room/mode scripts (B5, dreame_vacuum); vacuum itself is native Matter
-        # - script.dreame_clean_kitchen
-        # - script.dreame_clean_living
+        - script.dreame_clean_living
+        - script.dreame_clean_kitchen
+        - script.dreame_clean_bedroom
+        - script.dreame_mode_vacuum_only
+        - script.dreame_mode_vacuum_and_mop
+        - script.dreame_suction_max
+        - script.dreame_suction_quiet
         # Sonos extensions (sonos_homekit.yaml)
         - light.sonos_living_volume
         - switch.sonos_group_all
@@ -27,7 +32,7 @@ homekit:
         - binary_sensor.feeder_food_low
         - binary_sensor.feeder_dispenser_blocked
     entity_config:
-      fan.xiaomi_air_purifier:
+      fan.air_purifier:
         linked_pm25_sensor: sensor.xiaomi_air_purifier_pm25
         linked_filter_change_indicator_binary_sensor: binary_sensor.xiaomi_air_purifier_filter_low
       binary_sensor.litter_bin_full:

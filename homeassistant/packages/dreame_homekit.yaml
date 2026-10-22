@@ -1,0 +1,61 @@
+# Dreame X50 Ultra Complete: native Matter covers start/stop/pause/dock only.
+# Rooms + modes via HACS Tasshack/dreame-vacuum (cloud mode), exposed as scripts (switches in Home).
+# Segment IDs: Developer tools → States → vacuum.x50 → attribute `rooms`.
+# Entity IDs are placeholders: check Settings → Entities after install.
+script:
+  dreame_clean_living:
+    alias: Clean Living Room
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50
+        data:
+          segments: [1]
+  dreame_clean_kitchen:
+    alias: Clean Kitchen
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50
+        data:
+          segments: [2]
+  dreame_clean_bedroom:
+    alias: Clean Bedroom
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50
+        data:
+          segments: [3]
+  dreame_mode_vacuum_only:
+    alias: Vacuum Only Mode
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_cleaning_mode
+        data:
+          option: sweeping
+  dreame_mode_vacuum_and_mop:
+    alias: Vacuum and Mop Mode
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_cleaning_mode
+        data:
+          option: sweeping_and_mopping
+  dreame_suction_max:
+    alias: Vacuum Max Suction
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_suction_level
+        data:
+          option: max
+  dreame_suction_quiet:
+    alias: Vacuum Quiet Suction
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_suction_level
+        data:
+          option: quiet

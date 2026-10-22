@@ -17,3 +17,5 @@ Drop-in config for the HA bridge described in [../docs/apple-home-proposal.md](.
 | `packages/sonos_homekit.yaml` | Sonos volume, grouping, favorites as Home-compatible accessories |
 | `packages/neakasa_homekit.yaml` | Neakasa litter box mapped to Home sensors/switches |
 | `packages/petlibro_homekit.yaml` | Petlibro feeder mapped to Home switch/sensors |
+| `packages/dreame_homekit.yaml` | Dreame room clean + suction/mop modes as Home switches (B5) |
+| `packages/xiaomi_purifier_homekit.yaml` | Purifier wrapper fan with speed + presets (B6) |

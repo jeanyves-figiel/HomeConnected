@@ -1,0 +1,44 @@
+# Xiaomi Smart Air Purifier 4 Compact (xiaomi.airp.cpa4) via HACS xiaomi_miot.
+# xiaomi_miot exposes no speed control for this model: wrap favorite level (siid 9 / piid 11, verify on unit)
+# in a template fan with percentage + presets. Bridge exposes fan.air_purifier (not raw entity).
+# Placeholders: fan.xiaomi_cpa4 (raw entity), FAV_MAX (max favorite level, check MIoT spec).
+template:
+  - fan:
+      - name: Air Purifier
+        unique_id: air_purifier_wrapped
+        state: "{{ states('fan.xiaomi_cpa4') }}"
+        percentage: >-
+          {% set fav = state_attr('fan.xiaomi_cpa4', 'favorite_level') | int(0) %}
+          {{ (fav / 14 * 100) | round(0) | int }}
+        preset_mode: "{{ state_attr('fan.xiaomi_cpa4', 'preset_mode') }}"
+        preset_modes:
+          - Auto
+          - Sleep
+          - Favorite
+        turn_on:
+          - action: fan.turn_on
+            target:
+              entity_id: fan.xiaomi_cpa4
+        turn_off:
+          - action: fan.turn_off
+            target:
+              entity_id: fan.xiaomi_cpa4
+        set_preset_mode:
+          - action: fan.set_preset_mode
+            target:
+              entity_id: fan.xiaomi_cpa4
+            data:
+              preset_mode: "{{ preset_mode }}"
+        set_percentage:
+          - action: fan.set_preset_mode
+            target:
+              entity_id: fan.xiaomi_cpa4
+            data:
+              preset_mode: Favorite
+          - action: xiaomi_miot.set_miot_property
+            target:
+              entity_id: fan.xiaomi_cpa4
+            data:
+              siid: 9
+              piid: 11
+              value: "{{ (percentage / 100 * 14) | round(0) | int }}"
