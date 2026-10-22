@@ -1,0 +1,22 @@
+# Petlibro feeder via HACS integration (jjjonesjr33/petlibro, cloud).
+# Apple Home has no feeder category: map to switch + sensors.
+# Source entity IDs are placeholders: check integration's actual entities for your model.
+template:
+  - switch:
+      - name: Feeder Feed Now
+        unique_id: feeder_feed_now
+        state: "{{ false }}"
+        turn_on:
+          - action: button.press
+            target:
+              entity_id: button.petlibro_manual_feed
+        turn_off: []
+  - binary_sensor:
+      - name: Feeder Food Low
+        unique_id: feeder_food_low
+        device_class: problem
+        state: "{{ is_state('binary_sensor.petlibro_food_low', 'on') }}"
+      - name: Feeder Dispenser Blocked
+        unique_id: feeder_dispenser_blocked
+        device_class: problem
+        state: "{{ is_state('binary_sensor.petlibro_dispenser_problem', 'on') }}"

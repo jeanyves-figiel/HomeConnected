@@ -16,3 +16,4 @@ Drop-in config for the HA bridge described in [../docs/apple-home-proposal.md](.
 | `packages/homekit_bridge.yaml` | Single HomeKit Bridge, strict include filter (native devices excluded) |
 | `packages/sonos_homekit.yaml` | Sonos volume, grouping, favorites as Home-compatible accessories |
 | `packages/neakasa_homekit.yaml` | Neakasa litter box mapped to Home sensors/switches |
+| `packages/petlibro_homekit.yaml` | Petlibro feeder mapped to Home switch/sensors |

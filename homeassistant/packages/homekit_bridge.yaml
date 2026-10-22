@@ -22,6 +22,10 @@ homekit:
         - binary_sensor.litter_cat_present
         - sensor.litter_visits_today
         - switch.litter_clean_now
+        # Petlibro feeder (petlibro_homekit.yaml)
+        - switch.feeder_feed_now
+        - binary_sensor.feeder_food_low
+        - binary_sensor.feeder_dispenser_blocked
     entity_config:
       fan.xiaomi_air_purifier:
         linked_pm25_sensor: sensor.xiaomi_air_purifier_pm25

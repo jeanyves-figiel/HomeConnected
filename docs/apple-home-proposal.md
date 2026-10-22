@@ -8,7 +8,13 @@ Date: 2026-10-20. Status: draft for review.
 - **Sonos**: AirPlay 2 in Home + **built** HA package: volume, grouping, favorites as Home accessories.
 - **Xiaomi purifier**: Home Assistant (HA) → HomeKit Bridge. Reliable.
 - **Neakasa litter**: existing community HA integration (cloud MQTT push) + **built** mapping → Home sensors + "Clean now" switch.
-- **Petcube**: **build** custom HA integration (reverse-engineer app API + stream) → go2rtc → Scrypted → Home camera with HKSV.
+- **Petlibro feeder**
+- No native HomeKit/Matter. Options: HACS [`jjjonesjr33/petlibro`](https://github.com/jjjonesjr33/petlibro) (cloud, preferred: same HA bridge) or [`homebridge-petlibro-2`](https://cdn.jsdelivr.net/npm/homebridge-petlibro-2@1.5.2/README.md).
+- Built mapping ([`petlibro_homekit.yaml`](../homeassistant/packages/petlibro_homekit.yaml)): "Feed now" switch, food low + dispenser blocked → problem sensors (Home notifications). Schedules stay in Petlibro app.
+- Camera models (e.g. Granary Camera): video → same go2rtc/Scrypted path as Petcube (B1 phases 3–4), if stream obtainable.
+- Use secondary Petlibro account (shared device) for HA.
+
+**Petcube**: **build** custom HA integration (reverse-engineer app API + stream) → go2rtc → Scrypted → Home camera with HKSV.
 - Architecture: Apple home hub (HomePod/HomeView) + **Home Assistant** on small always-on host as single bridge for non-native devices.
 - Policy: no device left out. Where no integration exists, we build it. See [Build plan](#build-plan).
 
@@ -36,6 +42,7 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 | Dreame X50 Ultra Complete | Yes, Matter via firmware ≥ 4.3.9_3276 (basic: start/stop/pause/dock) | Native Matter + HA `dreame_vacuum` room/mode switches via HomeKit Bridge | High (native), Medium (rooms) |
 | Xiaomi Smart Air Purifier 4 Compact (`xiaomi.airp.cpa4`) | No Matter | HA `xiaomi_miot` (HACS) → HomeKit Bridge | High (fan speed needs workaround) |
 | Neakasa litter (M1) | No | HACS `ha-neakasa-litterbox` → template mapping → HomeKit Bridge | Medium |
+| Petlibro feeder (model TBC) | No (Homebridge plugin exists, no Matter) | HACS `jjjonesjr33/petlibro` → template mapping → HomeKit Bridge | Medium |
 | Petcube camera | No. No public API/RTSP | Custom HA integration (to build) → go2rtc → Scrypted (HKSV) | Low until API capture done |
 
 ### Details and caveats
@@ -95,7 +102,8 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
                Hue Bridge      Dreame X50        Sonos      Home Assistant
               (lamps, plugs)                                (VM on home Mac)
                                                               ├─ Xiaomi purifier
-                                                              └─ Neakasa (best effort)
+                                                              ├─ Neakasa
+                                                              └─ Petlibro feeder
    HomePod sensors: native            Petcube: own app (or replace with HKSV cam)
 ```
 
@@ -146,6 +154,7 @@ Rule: no device left out. Order = value × feasibility.
 | B3 | Neakasa Home mapping | Template sensors/switch on community integration | Done ([yaml](../homeassistant/packages/neakasa_homekit.yaml)) | 2nd Neakasa account |
 | B4 | HomeKit Bridge config | Single bridge, strict include filter | Done ([yaml](../homeassistant/packages/homekit_bridge.yaml)) | None |
 | B5 | Dreame rooms/modes | `dreame_vacuum` → room-clean + suction/mop scripts → HomeKit Bridge (Matter covers basics only) | To build | Dreame account, room names |
+| B7 | Petlibro feeder | Template mapping on community integration | Done ([yaml](../homeassistant/packages/petlibro_homekit.yaml)), entity IDs TBC | Model, 2nd Petlibro account |
 | B6 | Purifier fan speed | Template fan wrapping `set_miot_property` | To build | Confirm siid/piid on unit |
 
 ### B1 Petcube: phases
@@ -168,7 +177,7 @@ Risks: cert pinning (→ Frida/emulator), proprietary video codec relay (→ lar
 ## Decisions needed
 
 - Mac model (Apple Silicon/Intel) + macOS version.
-- Create secondary Petcube + Neakasa accounts (share devices) for HA.
+- Create secondary Petcube + Neakasa + Petlibro accounts (share devices) for HA.
 - Schedule Petcube capture session (B1 phase 1).
 
 ## Sources
