@@ -37,7 +37,7 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 | Dreame X50 Ultra Complete | Yes, Matter via firmware ≥ 4.3.9_3276 (basic: start/stop/pause/dock) | Native Matter + HA `dreame_vacuum` room/mode switches via HomeKit Bridge | High (native), Medium (rooms) |
 | Xiaomi Smart Air Purifier 4 Compact (`xiaomi.airp.cpa4`) | No Matter | HA `xiaomi_miot` (HACS) → HomeKit Bridge | High (fan speed needs workaround) |
 | Neakasa litter (M1) | No | HACS `ha-neakasa-litterbox` → template mapping → HomeKit Bridge | Medium |
-| Petlibro Granary (PLAF103; camera variant PLAF203 TBC) | No (Homebridge plugin exists, no Matter) | HACS `jjjonesjr33/petlibro` → template mapping → HomeKit Bridge | Medium |
+| Petlibro Granary (no camera, PLAF103) | No (Homebridge plugin exists, no Matter) | HACS `jjjonesjr33/petlibro` → template mapping → HomeKit Bridge | Medium |
 | Petcube camera | No. No public API/RTSP | Custom HA integration (to build) → go2rtc → Scrypted (HKSV) | Low until API capture done |
 
 ### Details and caveats
@@ -84,7 +84,6 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 **Petlibro Granary**
 - No native HomeKit/Matter. Options: HACS [`jjjonesjr33/petlibro`](https://github.com/jjjonesjr33/petlibro) (cloud, preferred: same HA bridge) or [`homebridge-petlibro-2`](https://cdn.jsdelivr.net/npm/homebridge-petlibro-2@1.5.2/README.md).
 - Built mapping ([`petlibro_homekit.yaml`](../homeassistant/packages/petlibro_homekit.yaml)): "Feed now" switch, food low + dispenser blocked → problem sensors (Home notifications). Schedules stay in Petlibro app.
-- Camera models (e.g. Granary Camera): video → same go2rtc/Scrypted path as Petcube (B1 phases 3–4), if stream obtainable.
 - Use secondary Petlibro account (shared device) for HA.
 
 **Petcube**
