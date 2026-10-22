@@ -1,16 +1,15 @@
 # Xiaomi Smart Air Purifier 4 Compact (xiaomi.airp.cpa4) via HACS xiaomi_miot.
-# xiaomi_miot exposes no speed control for this model: wrap favorite level (siid 9 / piid 11, verify on unit)
-# in a template fan with percentage + presets. Bridge exposes fan.air_purifier (not raw entity).
-# Placeholders: fan.xiaomi_cpa4 (raw entity), FAV_MAX (max favorite level, check MIoT spec).
+# Speed = favorite level (number.xiaomi_cpa4_5e82_favorite_level, 0-14, verified on unit 2026-10-22).
+# Template fan wraps it with percentage + presets. Bridge exposes fan.air_purifier (not raw entity).
 template:
   - fan:
       - name: Air Purifier
         unique_id: air_purifier_wrapped
-        state: "{{ states('fan.xiaomi_cpa4') }}"
+        state: "{{ states('fan.xiaomi_cpa4_5e82_air_purifier') }}"
         percentage: >-
-          {% set fav = state_attr('fan.xiaomi_cpa4', 'favorite_level') | int(0) %}
+          {% set fav = states('number.xiaomi_cpa4_5e82_favorite_level') | int(0) %}
           {{ (fav / 14 * 100) | round(0) | int }}
-        preset_mode: "{{ state_attr('fan.xiaomi_cpa4', 'preset_mode') }}"
+        preset_mode: "{{ state_attr('fan.xiaomi_cpa4_5e82_air_purifier', 'preset_mode') }}"
         preset_modes:
           - Auto
           - Sleep
@@ -18,27 +17,30 @@ template:
         turn_on:
           - action: fan.turn_on
             target:
-              entity_id: fan.xiaomi_cpa4
+              entity_id: fan.xiaomi_cpa4_5e82_air_purifier
         turn_off:
           - action: fan.turn_off
             target:
-              entity_id: fan.xiaomi_cpa4
+              entity_id: fan.xiaomi_cpa4_5e82_air_purifier
         set_preset_mode:
           - action: fan.set_preset_mode
             target:
-              entity_id: fan.xiaomi_cpa4
+              entity_id: fan.xiaomi_cpa4_5e82_air_purifier
             data:
               preset_mode: "{{ preset_mode }}"
         set_percentage:
           - action: fan.set_preset_mode
             target:
-              entity_id: fan.xiaomi_cpa4
+              entity_id: fan.xiaomi_cpa4_5e82_air_purifier
             data:
               preset_mode: Favorite
-          - action: xiaomi_miot.set_miot_property
+          - action: number.set_value
             target:
-              entity_id: fan.xiaomi_cpa4
+              entity_id: number.xiaomi_cpa4_5e82_favorite_level
             data:
-              siid: 9
-              piid: 11
               value: "{{ (percentage / 100 * 14) | round(0) | int }}"
+  - binary_sensor:
+      - name: Air Purifier Filter Low
+        unique_id: air_purifier_filter_low
+        device_class: problem
+        state: "{{ states('sensor.xiaomi_cpa4_5e82_filter_life_level') | int(100) < 10 }}"

@@ -14,6 +14,8 @@
 - `homeassistant/packages/`: HomeKit Bridge filter, Sonos volume/group/favorites accessories, Neakasa M1 sensor/switch mapping.
 
 ### Changed
+- `xiaomi_purifier_homekit.yaml`: real entities (`fan.xiaomi_cpa4_5e82_air_purifier`); speed via `number.xiaomi_cpa4_5e82_favorite_level` (0-14, verified on unit) instead of raw `set_miot_property` siid/piid; new `binary_sensor.air_purifier_filter_low` (< 10 %).
+- `homekit_bridge.yaml`: purifier linked to real PM2.5 + filter life sensors and filter-low indicator; deployed and paired.
 - `dreame_homekit.yaml`: real entity `vacuum.x50_ultra_complete`; 6 rooms from Map 1 (Hallway 1, Bathroom 2, Hallway 2 3, Room 4 4, Living Room 5, Dining Room 6); suction/mop-mode scripts replaced by CleanGenius scripts (routine, deep, vacuum+mop, mop after vacuum), since suction/mode selects are unavailable while CleanGenius is on.
 - `petlibro_homekit.yaml`: real Granary entities (`button.granary_smart_feeder_manual_feed`, `binary_sensor.granary_smart_feeder_food_status`, `..._food_dispenser`).
 - `homekit_bridge.yaml`: Dreame include list matches new scripts; purifier + Neakasa marked pending.

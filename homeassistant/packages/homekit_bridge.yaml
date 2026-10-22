@@ -5,10 +5,8 @@ homekit:
     port: 21064
     filter:
       include_entities:
-        # Xiaomi purifier (xiaomi_miot). PENDING: package not deployed until purifier entity exists.
-        - fan.air_purifier  # wrapped (xiaomi_purifier_homekit.yaml)
-        - sensor.xiaomi_air_purifier_pm25
-        - sensor.xiaomi_air_purifier_filter_life
+        # Xiaomi purifier (xiaomi_miot), wrapped in xiaomi_purifier_homekit.yaml
+        - fan.air_purifier
         # Dreame room/mode scripts (B5, dreame_vacuum); vacuum itself is native Matter
         - script.dreame_clean_hallway
         - script.dreame_clean_bathroom
@@ -35,8 +33,9 @@ homekit:
         - binary_sensor.feeder_dispenser_blocked
     entity_config:
       fan.air_purifier:
-        linked_pm25_sensor: sensor.xiaomi_air_purifier_pm25
-        linked_filter_change_indication_binary_sensor: binary_sensor.xiaomi_air_purifier_filter_low
+        linked_pm25_sensor: sensor.xiaomi_cpa4_5e82_pm25_density
+        linked_filter_life_level_sensor: sensor.xiaomi_cpa4_5e82_filter_life_level
+        linked_filter_change_indication_binary_sensor: binary_sensor.air_purifier_filter_low
       binary_sensor.litter_bin_full:
         name: Litter bin full
 
