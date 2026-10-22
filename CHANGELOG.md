@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ### Added
+- `docs/petcube-api.md`: B1 phase 1 findings (Petcube Cam 360 PTZ, REST endpoints, no cert pinning, live stream + pan/tilt on proprietary `ptcb` non-HTTP channel, no local RTSP/ONVIF, phase 3 options).
+- `tools/petcube/capture_addon.py`: logs other contacted hosts (host + path only) and TLS failures (pinning signal); redacts JSON websocket messages.
 - Proposal: "Dashboard & remote access" section (Apple Home primary on iPad/iPhone/Mac/HomeView via home hub + People invites; iPad Guided Access; HA dashboard secondary via Tailscale).
 - Proposal: Sony BRAVIA 4K VH2 TV row (native AirPlay 2/HomeKit, not bridged).
 - `homeassistant/packages/dreame_homekit.yaml` (B5): room clean, suction, mop mode scripts.

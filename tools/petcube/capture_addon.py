@@ -37,6 +37,15 @@ def _body(message, raw):
     return data if raw else _redact(data)
 
 
+def _ws_text(text, raw):
+    if raw:
+        return text
+    try:
+        return _redact(json.loads(text))
+    except ValueError:
+        return f"<{len(text)} chars non-JSON>"
+
+
 def _headers(headers, raw):
     return {k: v if raw or k.lower() not in SECRET_HEADERS else "<redacted>" for k, v in headers.items()}
 
@@ -46,8 +55,20 @@ class PetcubeCapture:
         loader.add_option("petcube_out", str, "petcube_capture.jsonl", "Output JSONL path")
         loader.add_option("petcube_raw", bool, False, "Keep secrets (local use only)")
 
+    def _write(self, entry):
+        with Path(ctx.options.petcube_out).open("a") as f:
+            f.write(json.dumps(entry) + "\n")
+
+    def tls_failed_client(self, data):
+        # App rejected the mitm certificate: sign of certificate pinning.
+        self._write({"tls_failed": data.context.server.sni or str(data.context.server.address)})
+
     def response(self, flow: http.HTTPFlow):
         if not HOST_RE.search(flow.request.pretty_host):
+            # Other hosts (stream relays, CDNs, analytics): host + path only, no bodies.
+            self._write({"ts": flow.request.timestamp_start, "other": flow.request.pretty_host,
+                         "method": flow.request.method, "path": flow.request.path.split("?")[0],
+                         "status": flow.response.status_code if flow.response else None})
             return
         raw = ctx.options.petcube_raw
         entry = {
@@ -71,7 +92,7 @@ class PetcubeCapture:
                 "ts": msg.timestamp,
                 "ws": flow.request.pretty_url,
                 "from_client": msg.from_client,
-                "data": msg.text if msg.is_text else f"<{len(msg.content)} bytes>",
+                "data": _ws_text(msg.text, ctx.options.petcube_raw) if msg.is_text else f"<{len(msg.content)} bytes>",
             }) + "\n")
 
 

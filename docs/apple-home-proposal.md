@@ -163,7 +163,7 @@ Rule: no device left out. Order = value × feasibility.
 
 | # | Build | What | Status | Needs from you |
 |---|---|---|---|---|
-| B1 | **Petcube HA integration** | Custom component `petcube`: login, devices, status, night vision, treat/laser. Then camera entity with stream | To build | Petcube account (2nd account w/ shared device), one traffic capture session |
+| B1 | **Petcube HA integration** | Scope: live view + pan/tilt only. Camera entity with stream, PTZ presets as switches | Phase 1 done ([findings](petcube-api.md)): stream on proprietary `ptcb`, phase 3 = high effort | Petcube account (2nd account w/ shared device), one traffic capture session |
 | B2 | Sonos Home accessories | Template volume/group/favorites | Done ([yaml](../homeassistant/packages/sonos_homekit.yaml)) | Entity IDs, favorite names |
 | B3 | Neakasa Home mapping | Template sensors/switch on community integration | Done + deployed ([yaml](../homeassistant/packages/neakasa_homekit.yaml)) | None |
 | B4 | HomeKit Bridge config | Single bridge, strict include filter | Done + paired ([yaml](../homeassistant/packages/homekit_bridge.yaml)) | None |
