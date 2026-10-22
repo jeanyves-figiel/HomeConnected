@@ -14,6 +14,12 @@
 - `homeassistant/packages/`: HomeKit Bridge filter, Sonos volume/group/favorites accessories, Neakasa M1 sensor/switch mapping.
 
 ### Changed
+- `dreame_homekit.yaml`: real entity `vacuum.x50_ultra_complete`; 6 rooms from Map 1 (Hallway 1, Bathroom 2, Hallway 2 3, Room 4 4, Living Room 5, Dining Room 6); suction/mop-mode scripts replaced by CleanGenius scripts (routine, deep, vacuum+mop, mop after vacuum), since suction/mode selects are unavailable while CleanGenius is on.
+- `petlibro_homekit.yaml`: real Granary entities (`button.granary_smart_feeder_manual_feed`, `binary_sensor.granary_smart_feeder_food_status`, `..._food_dispenser`).
+- `homekit_bridge.yaml`: Dreame include list matches new scripts; purifier + Neakasa marked pending.
+
+### Fixed
+- `homekit_bridge.yaml`: `linked_filter_change_indicator_binary_sensor` → `linked_filter_change_indication_binary_sensor` (invalid key made HomeKit setup fail).
 - `sonos_homekit.yaml`: real entity `media_player.bathroom_bathroom` (single Sonos One); "Bathroom Volume" light; group switch removed; favorites kept but not bridged until Sonos favorites exist.
 - `homekit_bridge.yaml`: include `light.bathroom_volume`; drop group switch; BRAVIA listed as native.
 - HA host: user's always-on laptop (replaces Mac).

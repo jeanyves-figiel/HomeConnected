@@ -167,8 +167,8 @@ Rule: no device left out. Order = value × feasibility.
 | B2 | Sonos Home accessories | Template volume/group/favorites | Done ([yaml](../homeassistant/packages/sonos_homekit.yaml)) | Entity IDs, favorite names |
 | B3 | Neakasa Home mapping | Template sensors/switch on community integration | Done ([yaml](../homeassistant/packages/neakasa_homekit.yaml)) | 2nd Neakasa account |
 | B4 | HomeKit Bridge config | Single bridge, strict include filter | Done ([yaml](../homeassistant/packages/homekit_bridge.yaml)) | None |
-| B5 | Dreame rooms/modes | `dreame_vacuum` → room-clean + suction/mop scripts → HomeKit Bridge (Matter covers basics only) | Done ([yaml](../homeassistant/packages/dreame_homekit.yaml)), segment IDs TBC | Dreame account, room names |
-| B7 | Petlibro feeder | Template mapping on community integration | Done ([yaml](../homeassistant/packages/petlibro_homekit.yaml)), entity IDs TBC | Model, 2nd Petlibro account |
+| B5 | Dreame rooms/modes | `dreame_vacuum` → room-clean + suction/mop scripts → HomeKit Bridge (Matter covers basics only) | Done + deployed ([yaml](../homeassistant/packages/dreame_homekit.yaml)), 6 rooms, CleanGenius modes | Dreame account, room names |
+| B7 | Petlibro feeder | Template mapping on community integration | Done + deployed ([yaml](../homeassistant/packages/petlibro_homekit.yaml)) | Model, 2nd Petlibro account |
 | B6 | Purifier fan speed | Template fan wrapping `set_miot_property` | Done ([yaml](../homeassistant/packages/xiaomi_purifier_homekit.yaml)), siid/piid + max level TBC on unit | Confirm siid/piid on unit |
 
 ### B1 Petcube: phases

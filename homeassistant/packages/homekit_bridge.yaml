@@ -5,23 +5,26 @@ homekit:
     port: 21064
     filter:
       include_entities:
-        # Xiaomi purifier (xiaomi_home / xiaomi_miot)
+        # Xiaomi purifier (xiaomi_miot). PENDING: package not deployed until purifier entity exists.
         - fan.air_purifier  # wrapped (xiaomi_purifier_homekit.yaml)
         - sensor.xiaomi_air_purifier_pm25
         - sensor.xiaomi_air_purifier_filter_life
         # Dreame room/mode scripts (B5, dreame_vacuum); vacuum itself is native Matter
-        - script.dreame_clean_living
-        - script.dreame_clean_kitchen
-        - script.dreame_clean_bedroom
-        - script.dreame_mode_vacuum_only
+        - script.dreame_clean_hallway
+        - script.dreame_clean_bathroom
+        - script.dreame_clean_hallway_2
+        - script.dreame_clean_room_4
+        - script.dreame_clean_living_room
+        - script.dreame_clean_dining_room
+        - script.dreame_mode_routine
+        - script.dreame_mode_deep
         - script.dreame_mode_vacuum_and_mop
-        - script.dreame_suction_max
-        - script.dreame_suction_quiet
+        - script.dreame_mode_mop_after_vacuum
         # Sonos extensions (sonos_homekit.yaml)
         - light.bathroom_volume
         # - script.sonos_favorite_1  # enable once Sonos favorites exist
         # - script.sonos_favorite_2
-        # Neakasa (neakasa_homekit.yaml)
+        # Neakasa (neakasa_homekit.yaml). PENDING: package not deployed until litter box is shared to HA account.
         - binary_sensor.litter_bin_full
         - binary_sensor.litter_cat_present
         - sensor.litter_visits_today
@@ -33,7 +36,7 @@ homekit:
     entity_config:
       fan.air_purifier:
         linked_pm25_sensor: sensor.xiaomi_air_purifier_pm25
-        linked_filter_change_indicator_binary_sensor: binary_sensor.xiaomi_air_purifier_filter_low
+        linked_filter_change_indication_binary_sensor: binary_sensor.xiaomi_air_purifier_filter_low
       binary_sensor.litter_bin_full:
         name: Litter bin full
 
