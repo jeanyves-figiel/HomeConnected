@@ -1,27 +1,27 @@
 # Neakasa M1 via HACS integration (roquerodrigo/ha-neakasa-litterbox, cloud MQTT push).
 # Apple Home has no litter-box category: map to sensors + switch.
-# Source entity IDs below are placeholders: check integration's actual entities.
+# sensor.neakasa_m1_status options: idle, cleaning, restoring, leveling, cat_appears.
+# Visits today / sand level stay in HA: HomeKit has no generic numeric sensor type.
 template:
   - binary_sensor:
       - name: Litter Bin Full
         unique_id: litter_bin_full
         device_class: problem
-        state: "{{ is_state('sensor.neakasa_bin_state', 'full') }}"
+        state: "{{ is_state('binary_sensor.neakasa_m1_waste_bucket_full', 'on') }}"
+      - name: Litter Needs Cleaning
+        unique_id: litter_needs_cleaning
+        device_class: problem
+        state: "{{ is_state('binary_sensor.neakasa_m1_needs_cleaning', 'on') }}"
       - name: Litter Cat Present
         unique_id: litter_cat_present
         device_class: occupancy
-        state: "{{ is_state('sensor.neakasa_status', 'cat_present') }}"
-  - sensor:
-      - name: Litter Visits Today
-        unique_id: litter_visits_today
-        state_class: measurement
-        state: "{{ states('sensor.neakasa_visits_today') }}"
+        state: "{{ is_state('sensor.neakasa_m1_status', 'cat_appears') }}"
   - switch:
       - name: Litter Clean Now
         unique_id: litter_clean_now
-        state: "{{ is_state('sensor.neakasa_status', 'cleaning') }}"
+        state: "{{ states('sensor.neakasa_m1_status') in ['cleaning', 'restoring', 'leveling'] }}"
         turn_on:
           - action: button.press
             target:
-              entity_id: button.neakasa_clean_now
+              entity_id: button.neakasa_m1_clean_now
         turn_off: []

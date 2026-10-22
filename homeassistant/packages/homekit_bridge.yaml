@@ -22,10 +22,10 @@ homekit:
         - light.bathroom_volume
         # - script.sonos_favorite_1  # enable once Sonos favorites exist
         # - script.sonos_favorite_2
-        # Neakasa (neakasa_homekit.yaml). PENDING: package not deployed until litter box is shared to HA account.
+        # Neakasa (neakasa_homekit.yaml)
         - binary_sensor.litter_bin_full
+        - binary_sensor.litter_needs_cleaning
         - binary_sensor.litter_cat_present
-        - sensor.litter_visits_today
         - switch.litter_clean_now
         # Petlibro feeder (petlibro_homekit.yaml)
         - switch.feeder_feed_now
