@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ### Added
+- Proposal: "Dashboard & remote access" section (Apple Home primary on iPad/iPhone/Mac/HomeView via home hub + People invites; iPad Guided Access; HA dashboard secondary via Tailscale).
+- Proposal: Sony BRAVIA 4K VH2 TV row (native AirPlay 2/HomeKit, not bridged).
 - `homeassistant/packages/dreame_homekit.yaml` (B5): room clean, suction, mop mode scripts.
 - `homeassistant/packages/xiaomi_purifier_homekit.yaml` (B6): wrapper fan with speed + presets.
 - `tools/petcube/`: mitmproxy capture addon (secret redaction) + procedure (B1 phase 1).
@@ -12,6 +14,8 @@
 - `homeassistant/packages/`: HomeKit Bridge filter, Sonos volume/group/favorites accessories, Neakasa M1 sensor/switch mapping.
 
 ### Changed
+- `sonos_homekit.yaml`: real entity `media_player.bathroom_bathroom` (single Sonos One); "Bathroom Volume" light; group switch removed; favorites kept but not bridged until Sonos favorites exist.
+- `homekit_bridge.yaml`: include `light.bathroom_volume`; drop group switch; BRAVIA listed as native.
 - HA host: user's always-on laptop (replaces Mac).
 - HA host: existing always-on Mac (HA OS in UTM VM, bridged; Scrypted native on macOS) instead of dedicated box.
 - Proposal updated for exact models: Dreame X50 Ultra Complete (native Matter, basic), Xiaomi Smart Air Purifier 4 Compact (`xiaomi_miot`), Neakasa M1.

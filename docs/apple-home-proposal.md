@@ -33,7 +33,8 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 |---|---|---|---|
 | Philips Hue lamps + plugs | Yes. Hue Bridge = HomeKit + Matter bridge | Add Hue Bridge in Home (HomeKit code or Matter) | High |
 | HomePod (music, temp/humidity) | Yes. Built-in sensors | Already in Home | High |
-| Sonos | No HomeKit/Matter. AirPlay 2 only | AirPlay 2 in Home + HA `sonos` → template accessories (volume/group/favorites) → HomeKit Bridge | High |
+| Sonos (1× Sonos One, Bathroom) | No HomeKit/Matter. AirPlay 2 only | AirPlay 2 in Home + HA `sonos` → template accessories (volume/favorites) → HomeKit Bridge | High |
+| Sony BRAVIA 4K VH2 TV | AirPlay 2 + HomeKit (supported BRAVIA models) | Add in Home app directly (Home → Add accessory, or TV settings → AirPlay & HomeKit). Not bridged via HA | High |
 | Dreame X50 Ultra Complete | Yes, Matter via firmware ≥ 4.3.9_3276 (basic: start/stop/pause/dock) | Native Matter + HA `dreame_vacuum` room/mode switches via HomeKit Bridge | High (native), Medium (rooms) |
 | Xiaomi Smart Air Purifier 4 Compact (`xiaomi.airp.cpa4`) | No Matter | HA `xiaomi_miot` (HACS) → HomeKit Bridge | High (fan speed needs workaround) |
 | Neakasa litter (M1) | No | HACS `ha-neakasa-litterbox` → template mapping → HomeKit Bridge | Medium |
@@ -54,8 +55,7 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 - Home app → Add accessory → each AirPlay 2 Sonos appears; assign rooms.
 - Limits: no Sonos grouping, inputs, EQ from Home. Siri "play X in kitchen" works via AirPlay.
 - Apple Home has no speaker category for 3rd-party controls; HomeKit Bridge TV/receiver mode only gives power button. Built workaround ([`sonos_homekit.yaml`](../homeassistant/packages/sonos_homekit.yaml)):
-  - Volume per room → dimmable "light" (brightness = volume). Works in Home, scenes, Siri ("set Living Volume to 30%").
-  - Group all rooms → switch.
+  - Volume → dimmable "light" (brightness = volume). Works in Home, scenes, Siri ("set Bathroom Volume to 30%").
   - Sonos favorites (radio, playlists) → scripts shown as switches.
 - Sonos joined CSA (Matter) but no Matter product support announced.
 
@@ -90,6 +90,20 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 - No HomeKit, Matter, RTSP or public API. Cloud host `api.petcube.com`. Only HA code found: [`lyntoo/petcube-ha`](https://github.com/lyntoo/petcube-ha) (Bites treat dispenser, no video).
 - Build: see [Build plan](#build-plan) B1. Phased; stream extraction is the hard part.
 - Interim: Petcube app for live view; Home gets nothing until B1 phase 2.
+
+## Dashboard & remote access
+
+Goal: one dashboard on iPad controlling everything, reachable remotely from every approved device.
+
+**Primary: Apple Home app** (iPad, iPhone, Mac, HomeView).
+- Every device lands in Home: native (Hue, HomePod, Dreame Matter, BRAVIA TV, Sonos AirPlay) + HA HomeKit Bridge (purifier, Neakasa, Petlibro, Sonos volume/favorites, Dreame rooms).
+- Remote access: automatic through the home hub (HomePod; HomeView/Apple TV later). No port forwarding.
+- Approved people: Home → Home Settings → People → Invite (Apple Account). Per-person remote access + edit rights.
+- iPad as wall/counter panel: Home app full screen, lock with Guided Access (Settings → Accessibility → Guided Access), Auto-Lock off, keep charging.
+
+**Secondary: Home Assistant dashboard** for what Home can't show (Dreame map, Petcube extras, history).
+- HA Companion app on iPad/iPhone, or browser.
+- Remote: Tailscale add-on (WireGuard mesh, no open ports), devices joined to the user's tailnet. Not installed yet.
 
 ## Recommended architecture
 

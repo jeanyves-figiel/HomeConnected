@@ -1,5 +1,5 @@
 # One bridge for every device without native HomeKit/Matter.
-# Hue, HomePod, Dreame (Matter) are paired directly in Apple Home: never include them here.
+# Hue, HomePod, Dreame (Matter), Sony BRAVIA TV (AirPlay/HomeKit) are paired directly in Apple Home: never include them here.
 homekit:
   - name: HA Bridge
     port: 21064
@@ -18,10 +18,9 @@ homekit:
         - script.dreame_suction_max
         - script.dreame_suction_quiet
         # Sonos extensions (sonos_homekit.yaml)
-        - light.sonos_living_volume
-        - switch.sonos_group_all
-        - script.sonos_favorite_1
-        - script.sonos_favorite_2
+        - light.bathroom_volume
+        # - script.sonos_favorite_1  # enable once Sonos favorites exist
+        # - script.sonos_favorite_2
         # Neakasa (neakasa_homekit.yaml)
         - binary_sensor.litter_bin_full
         - binary_sensor.litter_cat_present

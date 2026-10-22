@@ -1,60 +1,44 @@
 # Apple Home has no speaker category for non-AirPlay controls.
-# Workaround: volume = dimmable light, grouping = switch, favorites = scripts (shown as switches).
+# Workaround: volume = dimmable light, favorites = scripts (shown as switches).
 # AirPlay 2 pairing in Home stays for playback + Siri.
+# One Sonos in the home: Bathroom (Sonos One, media_player.bathroom_bathroom). No grouping.
 template:
   - light:
-      - name: Sonos Living Volume
-        unique_id: sonos_living_volume
-        state: "{{ is_state('media_player.sonos_living', 'playing') }}"
-        level: "{{ ((state_attr('media_player.sonos_living', 'volume_level') or 0) * 255) | int }}"
+      - name: Bathroom Volume
+        unique_id: sonos_bathroom_volume
+        state: "{{ is_state('media_player.bathroom_bathroom', 'playing') }}"
+        level: "{{ ((state_attr('media_player.bathroom_bathroom', 'volume_level') or 0) * 255) | int }}"
         turn_on:
           - action: media_player.media_play
             target:
-              entity_id: media_player.sonos_living
+              entity_id: media_player.bathroom_bathroom
         turn_off:
           - action: media_player.media_pause
             target:
-              entity_id: media_player.sonos_living
+              entity_id: media_player.bathroom_bathroom
         set_level:
           - action: media_player.volume_set
             target:
-              entity_id: media_player.sonos_living
+              entity_id: media_player.bathroom_bathroom
             data:
               volume_level: "{{ brightness / 255 }}"
 
-  - switch:
-      - name: Sonos Group All
-        unique_id: sonos_group_all
-        state: "{{ (state_attr('media_player.sonos_living', 'group_members') or []) | count > 1 }}"
-        turn_on:
-          - action: media_player.join
-            target:
-              entity_id: media_player.sonos_living
-            data:
-              group_members:
-                - media_player.sonos_kitchen
-                - media_player.sonos_bedroom
-        turn_off:
-          - action: media_player.unjoin
-            target:
-              entity_id:
-                - media_player.sonos_kitchen
-                - media_player.sonos_bedroom
-
+# Favorites: `source` must match an item of sensor.sonos_favorites (0 favorites on 2026-10-22).
+# Add favorites in the Sonos app, set `source`, then add the scripts to homekit_bridge.yaml.
 script:
   sonos_favorite_1:
     alias: Sonos Favorite 1
     sequence:
       - action: media_player.select_source
         target:
-          entity_id: media_player.sonos_living
+          entity_id: media_player.bathroom_bathroom
         data:
-          source: "FIP"  # exact name from Sonos favorites (source_list attribute)
+          source: "FIP"
   sonos_favorite_2:
     alias: Sonos Favorite 2
     sequence:
       - action: media_player.select_source
         target:
-          entity_id: media_player.sonos_living
+          entity_id: media_player.bathroom_bathroom
         data:
           source: "France Inter"
