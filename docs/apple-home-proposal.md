@@ -4,17 +4,12 @@ Date: 2026-10-20. Status: draft for review.
 
 ## TL;DR
 
-- 3 of 7 device families native today: **Hue**, **HomePod**, **Dreame X50** (Matter via OTA).
+- 3 of 8 device families native today: **Hue**, **HomePod**, **Dreame X50** (Matter via OTA).
 - **Sonos**: AirPlay 2 in Home + **built** HA package: volume, grouping, favorites as Home accessories.
 - **Xiaomi purifier**: Home Assistant (HA) → HomeKit Bridge. Reliable.
 - **Neakasa litter**: existing community HA integration (cloud MQTT push) + **built** mapping → Home sensors + "Clean now" switch.
-- **Petlibro feeder**
-- No native HomeKit/Matter. Options: HACS [`jjjonesjr33/petlibro`](https://github.com/jjjonesjr33/petlibro) (cloud, preferred: same HA bridge) or [`homebridge-petlibro-2`](https://cdn.jsdelivr.net/npm/homebridge-petlibro-2@1.5.2/README.md).
-- Built mapping ([`petlibro_homekit.yaml`](../homeassistant/packages/petlibro_homekit.yaml)): "Feed now" switch, food low + dispenser blocked → problem sensors (Home notifications). Schedules stay in Petlibro app.
-- Camera models (e.g. Granary Camera): video → same go2rtc/Scrypted path as Petcube (B1 phases 3–4), if stream obtainable.
-- Use secondary Petlibro account (shared device) for HA.
-
-**Petcube**: **build** custom HA integration (reverse-engineer app API + stream) → go2rtc → Scrypted → Home camera with HKSV.
+- **Petlibro feeder**: community HA integration + **built** mapping → "Feed now" switch + alert sensors.
+- **Petcube**: **build** custom HA integration (reverse-engineer app API + stream) → go2rtc → Scrypted → Home camera with HKSV.
 - Architecture: Apple home hub (HomePod/HomeView) + **Home Assistant** on small always-on host as single bridge for non-native devices.
 - Policy: no device left out. Where no integration exists, we build it. See [Build plan](#build-plan).
 
@@ -85,6 +80,12 @@ Prerequisite: Apple ended legacy Home architecture 2026-02-10. Home must be on n
 - Built mapping ([`neakasa_homekit.yaml`](../homeassistant/packages/neakasa_homekit.yaml)): bin full → problem sensor (Home notification), cat present → occupancy, visits → sensor, clean → switch.
 - Caveat: one login per Neakasa account → create second Neakasa account, share device to it, use that in HA.
 - Cloud-dependent. Hardening build: local ESP32 firmware (ESPHome) only if cloud breaks; voids warranty.
+
+**Petlibro feeder**
+- No native HomeKit/Matter. Options: HACS [`jjjonesjr33/petlibro`](https://github.com/jjjonesjr33/petlibro) (cloud, preferred: same HA bridge) or [`homebridge-petlibro-2`](https://cdn.jsdelivr.net/npm/homebridge-petlibro-2@1.5.2/README.md).
+- Built mapping ([`petlibro_homekit.yaml`](../homeassistant/packages/petlibro_homekit.yaml)): "Feed now" switch, food low + dispenser blocked → problem sensors (Home notifications). Schedules stay in Petlibro app.
+- Camera models (e.g. Granary Camera): video → same go2rtc/Scrypted path as Petcube (B1 phases 3–4), if stream obtainable.
+- Use secondary Petlibro account (shared device) for HA.
 
 **Petcube**
 - No HomeKit, Matter, RTSP or public API. Cloud host `api.petcube.com`. Only HA code found: [`lyntoo/petcube-ha`](https://github.com/lyntoo/petcube-ha) (Bites treat dispenser, no video).
