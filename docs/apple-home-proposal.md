@@ -103,7 +103,7 @@ Goal: one dashboard on iPad controlling everything, reachable remotely from ever
 
 **Secondary: Home Assistant dashboard** `/home-ipad` ([yaml](../homeassistant/dashboards/home.yaml)) for what Home can't show (Dreame map, history). Petcube stays in its own app (button on the dashboard).
 - HA Companion app on iPad/iPhone, or browser.
-- Remote: Tailscale add-on (WireGuard mesh, no open ports), devices joined to the user's tailnet. Not installed yet.
+- Remote: Tailscale app in HA (Settings → Apps → Tailscale; WireGuard mesh, no open ports). Installed 2026-10-23. iPad/iPhone join the same tailnet, then open `http://homeassistant/home-ipad` (MagicDNS) or the 100.x address shown in the Tailscale app.
 
 ## Recommended architecture
 

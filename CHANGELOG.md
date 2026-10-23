@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- Remote access: HA Tailscale app (add-on) v0.30.3 installed, auto-start, signed in to the user's tailnet (2026-10-23).
 - `homeassistant/dashboards/home.yaml`: iPad "Home" dashboard (lights, Dreame map + rooms, purifier, pets, media, Petcube app button), deployed as `/home-ipad`.
 - `docs/petcube-api.md`: B1 phase 1 findings (Petcube Cam 360 PTZ, REST endpoints, no cert pinning, live stream + pan/tilt on proprietary `ptcb` non-HTTP channel, no local RTSP/ONVIF, phase 3 options).
 - `tools/petcube/capture_addon.py`: logs other contacted hosts (host + path only) and TLS failures (pinning signal); redacts JSON websocket messages.
