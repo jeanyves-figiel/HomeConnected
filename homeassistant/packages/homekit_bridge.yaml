@@ -1,0 +1,49 @@
+# One bridge for every device without native HomeKit/Matter.
+# Hue, HomePod, Dreame (Matter), Sony BRAVIA TV (AirPlay/HomeKit) are paired directly in Apple Home: never include them here.
+homekit:
+  - name: HA Bridge
+    port: 21064
+    filter:
+      include_entities:
+        # Xiaomi purifier (xiaomi_miot), wrapped in xiaomi_purifier_homekit.yaml
+        - fan.air_purifier
+        # Dreame room/mode scripts (B5, dreame_vacuum); vacuum itself is native Matter
+        - script.dreame_clean_hallway
+        - script.dreame_clean_bathroom
+        - script.dreame_clean_hallway_2
+        - script.dreame_clean_room_4
+        - script.dreame_clean_living_room
+        - script.dreame_clean_dining_room
+        - script.dreame_mode_routine
+        - script.dreame_mode_deep
+        - script.dreame_mode_vacuum_and_mop
+        - script.dreame_mode_mop_after_vacuum
+        # Sonos extensions (sonos_homekit.yaml)
+        - light.bathroom_volume
+        # - script.sonos_favorite_1  # enable once Sonos favorites exist
+        # - script.sonos_favorite_2
+        # Neakasa (neakasa_homekit.yaml)
+        - binary_sensor.litter_bin_full
+        - binary_sensor.litter_needs_cleaning
+        - binary_sensor.litter_cat_present
+        - switch.litter_clean_now
+        # Petlibro feeder (petlibro_homekit.yaml)
+        - switch.feeder_feed_now
+        - binary_sensor.feeder_food_low
+        - binary_sensor.feeder_dispenser_blocked
+    entity_config:
+      fan.air_purifier:
+        linked_pm25_sensor: sensor.xiaomi_cpa4_5e82_pm25_density
+        linked_filter_life_level_sensor: sensor.xiaomi_cpa4_5e82_filter_life_level
+        linked_filter_change_indication_binary_sensor: binary_sensor.air_purifier_filter_low
+      binary_sensor.litter_bin_full:
+        name: Litter bin full
+
+# Petcube camera: separate accessory-mode instance once custom integration exists (see issue tracker).
+# Cameras must be their own HomeKit accessory, not behind the bridge.
+#  - name: Petcube Cam
+#    port: 21065
+#    mode: accessory
+#    filter:
+#      include_entities:
+#        - camera.petcube

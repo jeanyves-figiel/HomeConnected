@@ -1,0 +1,86 @@
+# Dreame X50 Ultra Complete: native Matter covers start/stop/pause/dock only.
+# Rooms + modes via HACS Tasshack/dreame-vacuum (cloud mode), exposed as scripts (switches in Home).
+# Segment IDs from vacuum.x50_ultra_complete attribute `rooms` (Map 1, 2026-10-22).
+# CleanGenius is on (routine cleaning): suction/cleaning-mode selects are unavailable while it is on,
+# so modes are driven through CleanGenius.
+script:
+  dreame_clean_hallway:
+    alias: Clean Hallway
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50_ultra_complete
+        data:
+          segments: [1]
+  dreame_clean_bathroom:
+    alias: Clean Bathroom
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50_ultra_complete
+        data:
+          segments: [2]
+  dreame_clean_hallway_2:
+    alias: Clean Hallway 2
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50_ultra_complete
+        data:
+          segments: [3]
+  dreame_clean_room_4:
+    alias: Clean Room 4
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50_ultra_complete
+        data:
+          segments: [4]
+  dreame_clean_living_room:
+    alias: Clean Living Room
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50_ultra_complete
+        data:
+          segments: [5]
+  dreame_clean_dining_room:
+    alias: Clean Dining Room
+    sequence:
+      - action: dreame_vacuum.vacuum_clean_segment
+        target:
+          entity_id: vacuum.x50_ultra_complete
+        data:
+          segments: [6]
+  dreame_mode_routine:
+    alias: Vacuum Routine Clean
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_ultra_complete_cleangenius
+        data:
+          option: routine_cleaning
+  dreame_mode_deep:
+    alias: Vacuum Deep Clean
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_ultra_complete_cleangenius
+        data:
+          option: deep_cleaning
+  dreame_mode_vacuum_and_mop:
+    alias: Vacuum and Mop Together
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_ultra_complete_cleangenius_mode
+        data:
+          option: vacuum_and_mop
+  dreame_mode_mop_after_vacuum:
+    alias: Mop After Vacuum
+    sequence:
+      - action: select.select_option
+        target:
+          entity_id: select.x50_ultra_complete_cleangenius_mode
+        data:
+          option: mop_after_vacuum

@@ -1,0 +1,22 @@
+# Petlibro Granary Smart Feeder via HACS integration (jjjonesjr33/petlibro, cloud).
+# Apple Home has no feeder category: map to switch + sensors.
+# Manual feed portion = select.granary_smart_feeder_manual_feed_quantity (set in HA or Petlibro app).
+template:
+  - switch:
+      - name: Feeder Feed Now
+        unique_id: feeder_feed_now
+        state: "{{ false }}"
+        turn_on:
+          - action: button.press
+            target:
+              entity_id: button.granary_smart_feeder_manual_feed
+        turn_off: []
+  - binary_sensor:
+      - name: Feeder Food Low
+        unique_id: feeder_food_low
+        device_class: problem
+        state: "{{ is_state('binary_sensor.granary_smart_feeder_food_status', 'on') }}"
+      - name: Feeder Dispenser Blocked
+        unique_id: feeder_dispenser_blocked
+        device_class: problem
+        state: "{{ is_state('binary_sensor.granary_smart_feeder_food_dispenser', 'on') }}"
