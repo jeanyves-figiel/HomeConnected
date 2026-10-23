@@ -1,0 +1,107 @@
+# iPad "Home" dashboard (HA secondary dashboard; Apple Home stays primary).
+title: Home
+views:
+  - title: Home
+    path: home
+    type: sections
+    max_columns: 3
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Lights
+          - type: tile
+            entity: light.living_area_living_room
+          - type: tile
+            entity: light.living_area_living_area
+          - type: tile
+            entity: light.living_area_living_play
+          - type: tile
+            entity: light.kitchen_kitchen
+          - type: tile
+            entity: light.bedroom_bedroom
+          - type: tile
+            entity: light.entrance_entrance
+          - type: tile
+            entity: light.living_area_smart_plug_fan
+      - type: grid
+        cards:
+          - type: heading
+            heading: Vacuum
+          - type: picture-entity
+            entity: camera.x50_ultra_complete_map
+            show_state: false
+            grid_options:
+              columns: full
+          - type: tile
+            entity: vacuum.x50_ultra_complete
+            name: Dreame X50
+          - type: tile
+            entity: script.dreame_clean_living_room
+          - type: tile
+            entity: script.dreame_clean_dining_room
+          - type: tile
+            entity: script.dreame_clean_bathroom
+          - type: tile
+            entity: script.dreame_clean_hallway
+          - type: tile
+            entity: script.dreame_clean_hallway_2
+          - type: tile
+            entity: script.dreame_clean_room_4
+          - type: tile
+            entity: select.x50_ultra_complete_cleangenius
+          - type: tile
+            entity: select.x50_ultra_complete_cleangenius_mode
+      - type: grid
+        cards:
+          - type: heading
+            heading: Air
+          - type: tile
+            entity: fan.air_purifier
+            features:
+              - type: fan-speed
+          - type: tile
+            entity: sensor.xiaomi_cpa4_5e82_pm25_density
+            name: PM2.5
+          - type: tile
+            entity: sensor.xiaomi_cpa4_5e82_filter_life_level
+            name: Filter life
+          - type: tile
+            entity: weather.forecast_home
+      - type: grid
+        cards:
+          - type: heading
+            heading: Pets
+          - type: tile
+            entity: switch.feeder_feed_now
+          - type: tile
+            entity: sensor.granary_smart_feeder_next_feed_time
+            name: Next feed
+          - type: tile
+            entity: binary_sensor.feeder_food_low
+          - type: tile
+            entity: switch.litter_clean_now
+          - type: tile
+            entity: sensor.neakasa_m1_visits_today
+            name: Litter visits today
+          - type: tile
+            entity: sensor.neakasa_m1_sand_level
+            name: Sand level
+          - type: tile
+            entity: binary_sensor.litter_bin_full
+          - type: button
+            name: Petcube live view
+            icon: mdi:cctv
+            tap_action:
+              action: url
+              url_path: "petcube://"
+      - type: grid
+        cards:
+          - type: heading
+            heading: Media
+          - type: media-control
+            entity: media_player.bathroom_bathroom
+          - type: media-control
+            entity: media_player.bravia_kd_50x80j
+          - type: media-control
+            entity: media_player.living_room_living_room

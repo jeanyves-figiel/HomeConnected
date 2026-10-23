@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added
+- `homeassistant/dashboards/home.yaml`: iPad "Home" dashboard (lights, Dreame map + rooms, purifier, pets, media, Petcube app button), deployed as `/home-ipad`.
 - `docs/petcube-api.md`: B1 phase 1 findings (Petcube Cam 360 PTZ, REST endpoints, no cert pinning, live stream + pan/tilt on proprietary `ptcb` non-HTTP channel, no local RTSP/ONVIF, phase 3 options).
 - `tools/petcube/capture_addon.py`: logs other contacted hosts (host + path only) and TLS failures (pinning signal); redacts JSON websocket messages.
 - Proposal: "Dashboard & remote access" section (Apple Home primary on iPad/iPhone/Mac/HomeView via home hub + People invites; iPad Guided Access; HA dashboard secondary via Tailscale).
@@ -16,6 +17,7 @@
 - `homeassistant/packages/`: HomeKit Bridge filter, Sonos volume/group/favorites accessories, Neakasa M1 sensor/switch mapping.
 
 ### Changed
+- Petcube: app-only by user decision (2026-10-23). No HA integration; dashboard button opens the Petcube app.
 - `neakasa_homekit.yaml`: real Neakasa M1 entities (`binary_sensor.neakasa_m1_waste_bucket_full`, `..._needs_cleaning`, `sensor.neakasa_m1_status`, `button.neakasa_m1_clean_now`); new "Litter Needs Cleaning" problem sensor; visits-today dropped from bridge (no HomeKit numeric sensor type).
 - `homekit_bridge.yaml`: Neakasa entries live; all bridged devices deployed.
 - `xiaomi_purifier_homekit.yaml`: real entities (`fan.xiaomi_cpa4_5e82_air_purifier`); speed via `number.xiaomi_cpa4_5e82_favorite_level` (0-14, verified on unit) instead of raw `set_miot_property` siid/piid; new `binary_sensor.air_purifier_filter_low` (< 10 %).

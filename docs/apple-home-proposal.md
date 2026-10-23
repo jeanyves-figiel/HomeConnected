@@ -101,7 +101,7 @@ Goal: one dashboard on iPad controlling everything, reachable remotely from ever
 - Approved people: Home → Home Settings → People → Invite (Apple Account). Per-person remote access + edit rights.
 - iPad as wall/counter panel: Home app full screen, lock with Guided Access (Settings → Accessibility → Guided Access), Auto-Lock off, keep charging.
 
-**Secondary: Home Assistant dashboard** for what Home can't show (Dreame map, Petcube extras, history).
+**Secondary: Home Assistant dashboard** `/home-ipad` ([yaml](../homeassistant/dashboards/home.yaml)) for what Home can't show (Dreame map, history). Petcube stays in its own app (button on the dashboard).
 - HA Companion app on iPad/iPhone, or browser.
 - Remote: Tailscale add-on (WireGuard mesh, no open ports), devices joined to the user's tailnet. Not installed yet.
 
@@ -163,7 +163,7 @@ Rule: no device left out. Order = value × feasibility.
 
 | # | Build | What | Status | Needs from you |
 |---|---|---|---|---|
-| B1 | **Petcube HA integration** | Scope: live view + pan/tilt only. Camera entity with stream, PTZ presets as switches | Phase 1 done ([findings](petcube-api.md)): stream on proprietary `ptcb`, phase 3 = high effort | Petcube account (2nd account w/ shared device), one traffic capture session |
+| B1 | **Petcube HA integration** | Scope: live view + pan/tilt only. Camera entity with stream, PTZ presets as switches | Closed: app-only by user decision (2026-10-23) | Petcube account (2nd account w/ shared device), one traffic capture session |
 | B2 | Sonos Home accessories | Template volume/group/favorites | Done ([yaml](../homeassistant/packages/sonos_homekit.yaml)) | Entity IDs, favorite names |
 | B3 | Neakasa Home mapping | Template sensors/switch on community integration | Done + deployed ([yaml](../homeassistant/packages/neakasa_homekit.yaml)) | None |
 | B4 | HomeKit Bridge config | Single bridge, strict include filter | Done + paired ([yaml](../homeassistant/packages/homekit_bridge.yaml)) | None |
